@@ -18,7 +18,7 @@ module.exports = async (team: NsfaTeam) => {
   const getResults = 'input[type=checkbox][name=showLiveResults]';
   const firstFixture = 'h2.coloured-heading + table tr:nth-child(2)';
 
-  const browser = await ppt.launch({ headless: false });
+  const browser = await ppt.launch();
   const page = await browser.newPage();
   await page.goto(url);
 
@@ -29,6 +29,7 @@ module.exports = async (team: NsfaTeam) => {
 
   await page.click(getResults);
   await page.waitForSelector(firstFixture);
+  await page.waitFor(500);
   await page.screenshot({ path: 'screenshots/screenshot.png', fullPage: true });
 
   await browser.close();
