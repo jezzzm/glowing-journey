@@ -1,0 +1,17 @@
+{
+  "name": "nsfa-scraper",
+  "version": "1.0.0",
+  "description": "scrape match data from NSFA website",
+  "main": "index.js",
+  "repository": "https://github.com/jezzzm/nsfa-scraper",
+  "author": "Jez M",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^13.9.0",
+    "puppeteer": "^2.1.1"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "tsc": "tsc index.ts"
+  }
+}
