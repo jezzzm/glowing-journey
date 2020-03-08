@@ -11,7 +11,7 @@
     "puppeteer": "^2.1.1"
   },
   "scripts": {
-    "start": "node index.js",
-    "tsc": "tsc index.ts"
+    "start": "node built/index.js",
+    "build": "tsc"
   }
 }
