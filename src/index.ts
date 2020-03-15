@@ -2,9 +2,45 @@ const
   getResults = require('./get-results'),
   express = require('express'),
   bodyParser = require('body-parser'),
-  app = express().use(bodyParser.json());
+  graphqlHTTP = require('express-graphql'),
+  mongo = require('mongoose'),
+  { buildSchema } = require('graphql');
 
-app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
+// Database config
+mongo
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(res => {
+    console.log('db connected')
+  })
+  .catch(err => {
+    console.log(Error, err.message)
+  });
+
+// graphql config
+const schema = buildSchema(`
+  type Query {
+    hello: String
+    yep(arg: String): String
+  }
+`);
+
+const root = {
+  hello: () => 'hello world!',
+  yep: ({ arg }) => `yep ${arg}`,
+};
+
+// express config
+const app = express();
+app.use(bodyParser.json());
+
+app.use('/graphql', graphqlHTTP({
+  schema: schema,
+  rootValue: root,
+  graphiql: true,
+}))
 
 app.post('/webhook', (req, res) => {
   let body = req.body;
@@ -36,6 +72,8 @@ app.get('/webhook', (req, res) => {
     }
   }
 })
+
+app.listen(process.env.PORT || 1337, () => console.log('app is listening'));
 
 
 
