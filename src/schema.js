@@ -15,6 +15,7 @@ const schema = buildSchema(`
   type Offense {
     fineId: ID!
     playerId: ID!
+    comment: String
   }
   type Player {
     name: String!
