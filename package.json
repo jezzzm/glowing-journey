@@ -14,12 +14,8 @@
     "mongoose": "^5.9.4",
     "puppeteer": "^2.1.1"
   },
-  "devDependencies": {
-    "@types/node": "^13.9.0",
-    "typescript": "^3.8.3"
-  },
+  "devDependencies": {},
   "scripts": {
-    "start": "tsc && node built/index.js",
-    "build": "tsc"
+    "start": "node src/index.js"
   }
 }

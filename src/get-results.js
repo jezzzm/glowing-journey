@@ -1,12 +1,6 @@
 const ppt = require('puppeteer');
 
-interface NsfaTeam {
-  readonly club: string,
-  readonly age: string,
-  readonly team: string
-}
-
-module.exports = async (team: NsfaTeam) => {
+module.exports = async (team) => {
   const url = 'https://nsfa.myclubmate.com.au/';
 
   const dropDowns = {
