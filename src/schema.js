@@ -7,12 +7,19 @@ const
 
 const schema = buildSchema(`
   type Fine {
+    _id: ID!
     name: String!
     description: String
     value: Int!
     offenses: [Offense]
   }
+  input FineInput {
+    name: String!
+    description: String
+    value: Int!
+  }
   type Offense {
+    _id: ID!
     fineId: ID!
     playerId: ID!
     comment: String
@@ -31,30 +38,46 @@ const schema = buildSchema(`
   }
 
   type Mutation {
-    addOffense(playerId: ID!, fineId: ID!): Offense
-    addPlayer(name: String!): Player
-    addFine(name: String!, description: String, value: Int!): Fine
+    createOffense(playerId: ID!, fineId: ID!): Offense
+    createPlayer(name: String!): Player
+    createFine(fineInput: FineInput): Fine
     deleteOffense(id: ID!): Offense
     deletePlayer(id: ID!): Player
     deleteFine(id: ID!): Fine
     updateFine(id: ID!, value: Int, name: String, description: String): Fine
   }
+
+  schema {
+    query: Query
+    mutation: Mutation
+  }
 `);
 
 const rootValue = {
-  Query: {
-    fine: ({ fineId }) => Fine.findById(fineId),
-    offense: ({ offenseId }) => Offense.findById(offenseId),
-    player: ({ playerId }) => Player.findById(playerId),
-    fines: () => Fine.find({}),
-    offenses: () => Offense.find({}),
-    players: () => Player.find({})
+  fine: ({ fineId }) => Fine.findById(fineId),
+  offense: ({ offenseId }) => Offense.findById(offenseId),
+  player: ({ playerId }) => Player.findById(playerId),
+  fines: () => Fine.find().then(res => res),
+  offenses: () => Offense.find().then(res => res),
+  players: () => Player.find().then(res => res),
+
+  createPlayer: ({ name }) => (
+    new Player({ name }).save().then(res => res)
+  ),
+  createFine: ({ fineInput }) => {
+    const { name, description, value } = fineInput;
+    const fine = new Fine({ name, description, value })
+    return fine.save().then(res => {
+      console.log(res);
+      return res;
+    }).catch(err => {
+      console.log(err);
+      throw err;
+    })
   },
-  Mutation: {
-    addPlayer: ({ name }) => new Player({ name }).save(),
-    addFine: ({ name, description, value }) => new Fine({ name, description, value }).save(),
-    addOffense: ({ playerId, fineId }) => new Offense({ playerId, fineId }).save(),
-  }
+  createOffense: ({ playerId, fineId }) => (
+    new Offense({ playerId, fineId }).save().then(res => res)
+  ),
 };
 
 module.exports = { schema, rootValue };
