@@ -1,44 +1,20 @@
 const
-  getResults = require('./get-results'),
   express = require('express'),
   bodyParser = require('body-parser'),
   graphqlHTTP = require('express-graphql'),
-  mongo = require('mongoose'),
-  { buildSchema } = require('graphql');
+  db = require('./db'),
+  { schema, rootValue } = require('./schema');
 
-// Database config
-mongo
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(res => {
-    console.log('db connected')
-  })
-  .catch(err => {
-    console.log(Error, err.message)
-  });
 
-// graphql config
-const schema = buildSchema(`
-  type Query {
-    hello: String
-    yep(arg: String): String
-  }
-`);
-
-const root = {
-  hello: () => 'hello world!',
-  yep: ({ arg }) => `yep ${arg}`,
-};
+db();
 
 // express config
 const app = express();
 app.use(bodyParser.json());
 
 app.use('/graphql', graphqlHTTP({
-  schema: schema,
-  rootValue: root,
+  schema,
+  rootValue,
   graphiql: true,
 }))
 
@@ -74,20 +50,3 @@ app.get('/webhook', (req, res) => {
 })
 
 app.listen(process.env.PORT || 1337, () => console.log('app is listening'));
-
-
-
-// selectors
-const myTeam = {
-  club: 'LNCOV',
-  age: 'R:MAA',
-  team: 'MAA2 A' // TODO: tbc
-};
-
-const demoTeam = {
-  club: 'LNCOV',
-  age: 'R:U08SAPL',
-  team: 'U8 SAL'
-};
-
-// getResults(demoTeam);
