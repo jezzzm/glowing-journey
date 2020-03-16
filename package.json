@@ -16,6 +16,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "seed": "node seed/index.js"
   }
 }
