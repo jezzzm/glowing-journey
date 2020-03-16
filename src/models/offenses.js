@@ -2,7 +2,7 @@ const mongo = require('mongoose');
 const Schema = mongo.Schema;
 
 const offenseSchema = new Schema({
-  fineId: String,
+  ruleId: String,
   playerId: String,
   comment: String,
 });

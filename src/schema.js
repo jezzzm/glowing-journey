@@ -1,19 +1,19 @@
 const
   { buildSchema } = require('graphql'),
-  Fine = require('./models/fines'),
+  Rule = require('./models/rules'),
   Offense = require('./models/offenses'),
   Player = require('./models/players');
 
 
 const schema = buildSchema(`
-  type Fine {
+  type Rule {
     _id: ID!
     name: String!
     description: String
     value: Int!
     offenses: [Offense]
   }
-  input FineInput {
+  input RuleInput {
     name: String!
     description: String
     value: Int!
@@ -21,12 +21,12 @@ const schema = buildSchema(`
 
   type Offense {
     _id: ID!
-    fineId: ID!
+    ruleId: ID!
     playerId: ID!
     comment: String
   }
   input OffenseInput {
-    fineId: ID!
+    ruleId: ID!
     playerId: ID!
     comment: String
   }
@@ -41,10 +41,10 @@ const schema = buildSchema(`
   }
 
   type Query {
-    fines: [Fine]
+    rules: [Rule]
     offenses: [Offense]
     players: [Player]
-    fine(fineId: ID): Fine
+    rule(ruleId: ID): Rule
     offense(offenseId: ID): Offense
     player(playerId: ID): Player
     playerByName(name: String): Player
@@ -53,11 +53,11 @@ const schema = buildSchema(`
   type Mutation {
     createOffense(offenseInput: OffenseInput): Offense
     createPlayer(playerInput: PlayerInput): Player
-    createFine(fineInput: FineInput): Fine
+    createRule(ruleInput: RuleInput): Rule
     deleteOffense(id: ID!): Offense
     deletePlayer(id: ID!): Player
-    deleteFine(id: ID!): Fine
-    updateFine(id: ID!, value: Int, name: String, description: String): Fine
+    deleteRule(id: ID!): Rule
+    updateRule(id: ID!, value: Int, name: String, description: String): Rule
   }
 
   schema {
@@ -67,11 +67,11 @@ const schema = buildSchema(`
 `);
 
 const rootValue = {
-  fine: ({ fineId }) => Fine.findById(fineId),
+  rule: ({ ruleId }) => Rule.findById(ruleId),
   offense: ({ offenseId }) => Offense.findById(offenseId),
   player: ({ playerId }) => Player.findById(playerId),
-  playerByName: ({ name }) => Player.findOne({ name }),
-  fines: () => Fine.find().then(res => res),
+  playerByName: ({ name }) => Player.findOne({ name }, (err, data) => data._id),
+  rules: () => Rule.find().then(res => res),
   offenses: () => Offense.find().then(res => res),
   players: () => Player.find().then(res => res),
 
@@ -79,14 +79,14 @@ const rootValue = {
     const player = new Player({ name: playerInput.name });
     return player.save().then(res => res).catch(err => console.error(err));
   },
-  createFine: ({ fineInput }) => {
-    const { name, description, value } = fineInput;
-    const fine = new Fine({ name, description, value });
-    return fine.save().then(res => res).catch(err => console.error(err));
+  createRule: ({ ruleInput }) => {
+    const { name, description, value } = ruleInput;
+    const rule = new Rule({ name, description, value });
+    return rule.save().then(res => res).catch(err => console.error(err));
   },
   createOffense: ({ offenseInput }) => {
-    const { playerId, fineId, comment } = offenseInput;
-    const offense = new Offense({ playerId, fineId, comment });
+    const { playerId, ruleId, comment } = offenseInput;
+    const offense = new Offense({ playerId, ruleId, comment });
     return offense.save().then(res => res).catch(err => console.error(err));
   },
 };
